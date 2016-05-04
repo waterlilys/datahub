@@ -1,11 +1,14 @@
 get:
   description: 
-    查询本人创建或具备写权限的所有repository
+    【拥有者】
+        如果后面没有username的参数,则返回本人创建或具备写权限的所有repository
+    【任意】
+        如果带有参数?username=XXX，则表示查询XXX的所有repository，这里只能反馈查询者具备读权限的repositories名字（比如public或者在private白
   headers:
     Authorization:
       description: 传入用户Token
       type: string
-      required: true
+      required: false
       example: Token 1a9686a83076241637693cab91fa3010
   responses:
     200:
@@ -13,24 +16,27 @@ get:
       body:
         application/json:
          example: |
-           {
-              "code": 0,
-              "msg":"ok",
-              "data":[
-                         {
-                             "repname": "mobile1"
-                         },
-                         {
-                             "repname": "mobile2"
-                         },
-                         {
-                             "repname": "mobile3"
-                         }
-                      ]
-           }
+           [
+               {
+                   "repname": "mobile"
+               }，
+               {
+                   "repname": "mobile"
+               },
+               {
+                   "repname": "mobile"
+               }
+           ]
   queryParameters:
     page:
       description: (分页页数),1 - N,默认=1（page=1可以不传）
+      required: false
+    size:
+      description: （页面大小）,1 - N，默认=6 (-1 返回全部)
+      required: false
+    username:
+      description: 数据提供者username（header 中为登录用户的username）
+      example: shendf@asiainfo.com
       required: false
 /{reponame}:
   uriParameters:
@@ -59,23 +65,124 @@ get:
         body:
           application/json:
            example: |
-            {
-                 "code": 0,
-                 "msg": "ok",
-                 "data": {
-                            "create_user": "panxy3@asiainfo.com",
-                            "repaccesstype": "public",
-                            "comment": "详情",
-                            "optime": "2015-10.1122: 10: 20",
-                            "items": 3000,
-                            "label": {},
-                            "dataitems": [
-                                "dataitem1",
-                                "dataitem2"
-                            ]
-                         }
+             {
+                 "create_user": "panxy3@asiainfo.com",
+                 "repaccesstype": "public",
+                 "comment": "详情",
+                 "optime": "2015-10.1122: 10: 20",
+                 "items": 3000,
+                 "label": {},
+                 "dataitems": [
+                     "dataitem1",
+                     "dataitem2"
+                 ]
              }
-
+    queryParameters:
+      items:
+        description: 查询repname的所有dataitem开关
+        example: items=1
+        required: false
+      page:
+        description: (分页页数),1 - N,默认=1（page=1可以不传）
+        required: false
+      size:
+        description: （页面大小）,1 - N，默认=6 (-1 返回全部)
+        example: size=10
+        required: false
+  post:
+    description: 【任意】创建repository
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    body:
+      description:
+        repaccesstype               访问权限[public(默认), private]
+        comment                     详情
+        label                       label自定义json标签。
+        label[sys,opt,owner,other]  如果为空可以不传
+        label.sys                   系统自定义label参数
+        label.opt                   运营人员定义label参数
+        label.owner                 拥有者自定义label参数
+        label.other                 管理员自定义label参数
+      application/json:
+        example: |
+          {
+              "repaccesstype": "public",
+              "comment": "中国移动北京终端详情",
+              "label": {
+                  "sys": {
+                      "loc": "北京"
+                  },
+                  "opt": {
+                      "age": 22
+                  },
+                  "owner": {
+                      "name": "michael"
+                  },
+                  "other": {
+                      "friend": 22
+                  }
+              }
+          }
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+             {
+                 code: 0,
+                 msg: "ok",
+                 data: ""
+             }
+  put:
+    description: 【拥有者】更新repository
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    body:
+      description:
+        repaccesstype               访问权限[public(默认), private]
+        comment                     详情
+      application/json:
+        example: |
+          {
+              "repaccesstype": "public",
+              "comment": "中国移动北京终端详情",
+          }
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+             {
+                 code: 0,
+                 msg: "ok",
+                 data: ""
+             }
+  delete:
+    description: 【拥有者】删除repository
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+             {
+                 code: 0,
+                 msg: "ok",
+                 data: ""
+             }
 /{reponame}/{itemname}:
   uriParameters:
     reponame:
@@ -114,65 +221,61 @@ get:
           application/json:
             example: |
               {
-                 "code": 0,
-                 "msg": "ok",
-                 "data": {
-                            "create_user": "panxy3",
-                            "itemaccesstype": "private",
-                            "optime": "2015-08-0100: 00: 00",
-                            "meta": {},
-                            "sample": {},
-                            "price":[
-                                        {
-                                            "time": 1,
-                                            "unit": "day",
-                                            "money": 5,
-                                            "expire":30,
-                                            "uuid":100000000000000000000000
-                                        },
-                                        {
-                                            "time": 10,
-                                            "unit": "day",
-                                            "money": 50,
-                                            "expire":30,
-                                            "uuid":100000000000000000000000
-                                        },
-                                        {
-                                            "time": 100,
-                                            "unit": "day",
-                                            "money": 400,
-                                            "expire":30,
-                                            "uuid":100000000000000000000000
-                                        }
-                                    ],      
-                            "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。",
-                            "tags":10,
-                            "label": {
-                                "sys": {
-                                    "supply_style": "flow"
-                                },
-                                "opt": {},
-                                "owner": {},
-                                "other": {}
+                "create_user": "panxy3",
+                "itemaccesstype": "private",
+                "optime": "2015-08-0100: 00: 00",
+                "meta": {},
+                "sample": {},
+                "price":[
+                            {
+                                "time": 1,
+                                "unit": "day",
+                                "money": 5,
+                                "expire":30,
+                                "uuid":100000000000000000000000
                             },
-                            "taglist":[
-                                    {
-                                        "tag": "tag001",
-                                        "comment": "2022201MB",
-                                        "optime": "2015-11-16 10:50:31.779460404 +0000 UTC|3小时以前"
-                                    },
-                                    {
-                                        "tag": "tag002",
-                                        "comment": "2001MB",
-                                        "optime": "2015-11-17 02:14:55.241920929 +0000 UTC|10分钟以前"
-                                    },
-                                    {
-                                        "tag": "tag003",
-                                        "comment": "2001MB",
-                                        "optime": "2015-11-17 02:14:59.491811069 +0000 UTC|6天以前"
-                                    }
-                            ]
-                         }
+                            {
+                                "time": 10,
+                                "unit": "day",
+                                "money": 50,
+                                "expire":30,
+                                "uuid":100000000000000000000000
+                            },
+                            {
+                                "time": 100,
+                                "unit": "day",
+                                "money": 400,
+                                "expire":30,
+                                "uuid":100000000000000000000000
+                            }
+                        ],      
+                "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。",
+                "tags":10
+                "label": {
+                    "sys": {
+                        "supply_style": "flow"
+                    },
+                    "opt": {},
+                    "owner": {},
+                    "other": {}
+                },
+                "taglist":[
+                        {
+                            "tag": "tag001",
+                            "comment": "2022201MB",
+                            "optime": "2015-11-16 10:50:31.779460404 +0000 UTC|3小时以前"
+                        },
+                        {
+                            "tag": "tag002",
+                            "comment": "2001MB",
+                            "optime": "2015-11-17 02:14:55.241920929 +0000 UTC|10分钟以前"
+                        },
+                        {
+                            "tag": "tag003",
+                            "comment": "2001MB",
+                            "optime": "2015-11-17 02:14:59.491811069 +0000 UTC|6天以前"
+                        }
+                ]
               }
     queryParameters:
       abstract:
@@ -180,7 +283,11 @@ get:
         example: abstract=1
         required: false
       page:
-        description: (分页页数),1 - N,默认=1（page=1可以不传）
+        description: (分页页数),1 - N,默认=1（page=1可以不传）Ｇ
+        required: false
+      size:
+        description: （页面大小）,1 - N，默认=6 (-1 返回全部)
+        example: size=10
         required: false
   post:
     description: 【任意】创建DataItem
@@ -197,53 +304,184 @@ get:
         sample                          样例数据
         comment                         详情
         price                           价格计划
-        price.units                     购买数量
-        price.money                     价格
-        price.expire                    有效期(天)
-        price.limit                     限购次数【可选】
         label.sys.supply_style          服务形式[api；batch；flow]【必选】
         label.sys.supply_style.api      实时单条
         label.sys.supply_style.batch    批量
         label.sys.supply_style.flow     流式
       application/json:
         example: |
-             {
-                   "itemaccesstype": "private",
-                   "meta": "{}",
-                   "sample": "{}",
-                   "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。",
-                   "price":[
-                               {
-                                   "units": "30",
-                                   "money": 5,
-                                   "expire":30,
-                                   "limit":1
-                               },
-                               {
-                                   "units": "30",
-                                   "money": 5,
-                                   "expire":30,
-                                   "limit":1
-                               }
-                           ],
-                   "label": {
-                       "sys": {
-                           "supply_style": "batch"
-                       },
-                       "opt": {},
-                       "owner": {},
-                       "other": {}
-                   }
-             }
+          example 1:
+          {
+              "itemaccesstype": "private",
+              "meta": "{}",
+              "sample": "{}",
+              "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。",
+              "price":[
+                          {
+                              "time"： 1,
+                              "money": 5,
+                              "expire":30
+                          },
+                          {
+                              "time"： 10,
+                              "money": 50,
+                              "expire":30
+                          },
+                          {
+                              "time"： 100,
+                              "money": 400,
+                              "expire":30
+                          }
+                      ],
+              "label": {
+                  "sys": {
+                      "supply_style": "flow"
+                  },
+                  "opt": {},
+                  "owner": {},
+                  "other": {}
+              }
+          }
+          example 2:
+          {
+              "itemaccesstype": "private",
+              "meta": "{}",
+              "sample": "{}",
+              "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。",
+              "price":[
+                          {
+                              "times": 1000,
+                              "money": 5,
+                              "expire":30
+                          },
+                          {
+                              "times": 10000,
+                              "money": 45,
+                              "expire":30
+                          },
+                          {
+                              "times": 100000,
+                              "money": 400,
+                              "expire":30
+                          }
+                      ],
+              "label": {
+                  "sys": {
+                      "supply_style": "api"
+                  },
+                  "opt": {},
+                  "owner": {},
+                  "other": {}
+              }
+          }
+          example 3:
+          {
+              "itemaccesstype": "private",
+              "meta": "{}",
+              "sample": "{}",
+              "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。",
+              "price":[
+                          {
+                              "times": 1000,
+                              "money": 5,
+                              "expire":30
+                          },
+                          {
+                              "times": 10000,
+                              "money": 45,
+                              "expire":30
+                          },
+                          {
+                              "times": 100000,
+                              "money": 400,
+                              "expire":30
+                          }
+                      ],
+              "label": {
+                  "sys": {
+                      "supply_style": "batch"
+                  },
+                  "opt": {},
+                  "owner": {},
+                  "other": {}
+              }
+          }
     responses:
       200:
         body:
           application/json:
            example: |
              {
-                 "code": 0,
-                 "msg": "ok",
-                 "data": ""
+                 code: 0,
+                 msg: "ok",
+                 data: ""
+             }
+  put:
+    description: 【拥有者】更新DataItem
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    body:
+      description:
+        itemaccesstype                  访问权限[public(默认), private]
+        meta                            元数据
+        sample                          样例数据
+        comment                         详情
+      application/json:
+        example: |
+          {
+            "itemaccesstype": "private",
+            "meta": "{}",
+            "sample": "{}",
+            "price":[
+                        {
+                            "times": 1000,
+                            "money": 5,
+                            "expire":30
+                        },
+                        {
+                            "times": 10000,
+                            "money": 45,
+                            "expire":30
+                        },
+                        {
+                            "times": 100000,
+                            "money": 400,
+                            "expire":30
+                        }
+                    ],
+            "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。"      
+          }
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+             {
+                 code: 0,
+                 msg: "ok",
+                 data: ""
+             }
+  delete:
+    description: 【拥有者】删除DataItem
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+             {
+                 code: 0,
+                 msg: "ok",
+                 data: ""
              }
 /{reponame}/{itemname}/{tag}:
   uriParameters:
@@ -280,7 +518,7 @@ get:
                 "optime": "2015-08-03 00:00:00|6天以前"
               }
   post:
-    description: 【拥有者】发布Tag，注意Tag需要按照UTF8编码后传递
+    description: 【拥有者】发布DataItem下的Tag详情，注意Tag需要按照UTF8编码后传递
     headers:
       Authorization:
         description: 传入用户Token
@@ -301,8 +539,91 @@ get:
           application/json:
            example: |
              {
-                 "code": 0,
-                 "msg": "ok",
-                 "data": ""
+                 code: 0,
+                 msg: "ok",
+                 data: ""
              }
-
+  put:
+    description: 【拥有者】更新tag
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    body:
+      description:
+        comment                         详情
+      application/json:
+        example: |
+          {
+              "comment":"2001MB"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+             {
+                 code: 0,
+                 msg: "ok",
+                 data: ""
+             }
+  delete:
+    description: 【拥有者】删除DataItem下的Tag详情，注意Tag需要按照UTF8编码后传递
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+             {
+                 code: 0,
+                 msg: "ok",
+                 data: ""
+             }
+/{reponame}/{itemname}/subpermission:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 查询某用户是否具有订阅权限
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                  "create_user": "panxy3",
+                  "itemaccesstype": "private",
+                  "optime": "2015-08-0100: 00: 00",
+                  "meta": {},
+                  "sample": {},
+                  "comment": "对终端使用情况、变化情况进行了全方面的分析。包括分品牌统计市场存量、新增、机型、数量、换机等情况。终端与ARPU、DOU、网龄的映射关系。终端的APP安装情况等。",
+                  "tags":10
+                  "label": {
+                      "sys": {
+                          "supply_style": "api"
+                       },
+                       "opt": {},
+                       "owner": {},
+                       "other": {}
+                  }
+              }

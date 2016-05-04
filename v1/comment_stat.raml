@@ -1,0 +1,17 @@
+/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository name
+      example: Internet_stats
+      required: true
+    itemname:
+      description: dataitem name
+      example: Music
+      required: true
+  get:
+    description: 【任何】返回一个dataitem上的评论数
+    responses:
+      200:
+        body:
+          application/text:
+            example: numcomments#58; 33

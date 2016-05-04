@@ -1,0 +1,90 @@
+/{reponame}/{itemname}/label:
+  put:
+    description: 新增/更新dataitem的label的某条属性
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          owner.{labelname}:
+            description: 数据拥有者对此数据项某标签
+            example: owner.dataarea="北京"
+            required: false
+          other.{labelname}::
+            description: 其它会员对此数据项的标签
+            example: other.zhouqi="每日"
+            required: false
+  delete:
+    description: 拥有者：删除dataitem的label.owner的某条属性，管理员：删除dataitem的label.other的某条属性
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+    queryParameters:
+      owner.{labelname}:
+        description: 删除数据拥有者对此数据分类的{labelname}标签
+        example: owner.dataarea="北京"
+        required: false
+      other.{labelname}::
+        description: 删除其它用户对此数据分类的{labelname}标签
+        example: other.zhouqi="每日"
+        required: false
+/{reponame}/label:
+  put:
+    description: 新增/更新repository的label的某条属性
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          owner.{labelname}:
+            description: 数据拥有者对此数据项某标签
+            example: owner.dataarea="北京"
+            required: false
+          other.{labelname}:
+            description: 其它会员对此数据项的标签
+            example: other.zhouqi="每日"
+            required: false
+  delete:
+    description: ［拥有者］删除repository的某条属性，［管理员］删除repository的某条属性
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+    queryParameters:
+      owner.{labelname}:
+        description: 删除数据拥有者对此数据分类的{labelname}标签
+        example: owner.dataarea="北京"
+        required: false
+      other.{labelname}::
+        description: 删除其它用户对此数据分类的{labelname}标签
+        example: other.zhouqi="每日"
+        required: false

@@ -1,102 +1,486 @@
-/dataitems:
+description: |
+  (40) 查询所有订购
+       GET /subscriptions/pull
+  (41) 查询在某个respository中的所有订购
+       GET /subscriptions/pull/{reponame}
+  (42) 查询在某个dataitem上的所有订购
+       GET /subscriptions/pull/{reponame}/{itemname}
+  (43) 查询在某个dataitem上的所有订购
+       GET /subscriptions/push
+  (44) 查询在自己的某个respository中的所有订购
+       GET /subscriptions/push/{reponame}
+  (45) 查询自己的某个dataitem上的所有订购
+       GET /subscriptions/push/{reponame}/{itemname}
+/pull:
   get:
-    description: 查询自己订购的所有items
+    description: 【需求者】查询所有订购
     headers:
       Authorization:
-        description: 需加Auth header
+        description: 非匿名用户需加Auth header，匿名可用可不传。
         type: string
         required: false
         example: Token 1a9686a83076241637693cab91fa3010
     queryParameters:
       phase:
-        description: 1
+        description: consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6, applying#58; 7, wthdrawn#58; 8, denied#58; 9, flagged#58; 10
+        enum: [1..3,5..10]
         example: phase=1
-        required: true
-      repname:
-        description: 查询自己在某个repository下订购的所有items
-        example: repname=Internet_Stat
+        required: false
+      beforetime:
+        displayName: time_stamp
+        type: string
+        description: 最晚时间, 格式：2015-11-23T09#58;02#58;52Z
+        example: beforetime=2015-11-23T09#58;02#58;52Z
         required: false
     responses:
       200:
         body:
           application/json:
             schema: |
+              sellername: 数据提供者
               repname: repository name
               itemname: data item name
+              supply_style: flow | batch 
+              signtime: 订购时间
+              expiretime: 自动过期时间
+              freezetime: 交易成功时间（在未达到freezed phase之前，此值为空）
+              finishtime: 交易完成时间（在未达到freezed phase之前，此值为空）
+              phase: 1-3, 5-10 (意义：consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6, applying#58; 7, wthdrawn#58; 8, denied#58; 9, flagged#58; 10)
+              plan.money: 交易金额
+              plan.units: 最大下载次数（supply_style=batch）,最大下载天数（supply_style=flow)
+              plan.used: 已经使用量　
+              plan.limit: 最多可以订购次数
+              plan.subs: 当前订购次数
+              plan.expire: 交易有效期（天数）
             example: |
-              {
-                "code": 0,
-                "msg": "OK",
-                "data": 
-                  {
-                    "total": 2,
-                    "results":
-                      [
-                        {
-                          "repname":"CBA", 
-                          "itemname":"triger"
-                        },
-                        {
-                          "repname":"repo0",
-                          "itemname":"item1"
-                        }
-                      ]
+              [
+                {
+                  "subscriptionid": 1234567,
+                  "sellername": "li4@example.com"
+                  "repname":"NBA",
+                  "itemname":"bear",
+                  "signtime":"2015-11-10T15:04:05Z08:00",
+                  "expiretime":"2016-01-15T11:28:21Z",
+                  "freezetime":"2015-12-11T10:51:11Z",
+                  "finishtime":"2016-01-10T10:51:11Z",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
                   }
-              }
-/{repository}/{dataitem}/pull:
+                },
+                {
+                  "subscriptionid": 1234568,
+                  "sellername": "zhang3@example.com"
+                  "repname":"CBA",
+                  "itemname":"triger",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                }
+              ]
+
+/pull/{reponame}:
   uriParameters:
-    repository:
+    reponame:
       description: repository名称
-      example: Location_information
+      example: Intenet_stats
       required: true
-    dataitem:
-      description: dataitem名称
-      example: Cell
-      required: true
-  post:
-    description: 从提供者下载数据
+  get:
+    description: 【需求者】查询在某个dataitem上的所有订购
     headers:
       Authorization:
-        description: 需加Auth header
+        description: 非匿名用户需加Auth header，匿名可用可不传。
         type: string
         required: false
         example: Token 1a9686a83076241637693cab91fa3010
     queryParameters:
       phase:
-        description: 1
+        description: consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6
+        enum: [1..3,5,6]
         example: phase=1
-        required: true
-      repname:
-        description: 查询自己在某个repository下订购的所有items
-        example: repname=Location_information
         required: false
-    body:
-      description: |
-        tag                             tag名称
-        datapool                        datapool名称
-        destname                        目标文件存储名称
-        repository                      repository名称
-        dataitem                        dataitem名称
-        itemdesc                        datapool中dataitem所在子目录
-        automatic                       是否自动pull
-        cancelautomatic                 是否取消自动pull
-      application/json:
-        example: |
-             {
-               "tag": "BR201511250013_23GCELL_05" ,       
-               "datapool": "mydp",
-               "destname": "BR201511250013_23GCELL_05.txt",
-               "itemdesc": "Cell",
-               "automatic": false,
-               "cancelautomatic": false,
-             }
+      beforetime:
+        displayName: time_stamp
+        type: string
+        description: 最晚时间, 格式：2015-11-23T09#58;02#58;52Z
+        example: beforetime=2015-11-23T09#58;02#58;52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              sellername: 数据提供者
+              supply_style: flow | batch 
+              signtime: 订购时间
+              expiretime: 自动过期时间
+              freezetime: 交易成功时间（在未达到freezed phase之前，此值为空）
+              finishtime: 交易完成时间（在未达到freezed phase之前，此值为空）
+              phase: 1-3, 5-10 (意义：consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6, applying#58; 7, wthdrawn#58; 8, denied#58; 9, flagged#58; 10)
+              plan.money: 交易金额
+              plan.units: 最大下载次数（supply_style=batch）,最大下载天数（supply_style=flow)
+              plan.used: 已经使用量　
+              plan.limit: 最多可以订购次数
+              plan.subs: 当前订购次数
+              plan.expire: 交易有效期（天数）
+            example: |
+              [
+                {
+                  "subscriptionid": 1234567,
+                  "sellername": "zhang3@example.com",
+                  "itemname":"bear",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-10T15:04:05Z08:00",
+                  "expiretime":"2016-01-15T11:28:21Z",
+                  "freezetime":"2015-12-11T10:51:11Z",
+                  "finishtime":"2016-01-10T10:51:11Z",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                },
+                {
+                  "subscriptionid": 1234568,
+                  "sellername": "zhang3@example.com",
+                  "itemname":"triger",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                }
+              ]
+/pull/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【任意】返回该tag的pull量
+    headers:
+      Authorization:
+        description: 非匿名用户需加Auth header，匿名可用可不传。
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      phase:
+        description: consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6
+        enum: [1..3,5..10]
+        example: phase=1
+        required: false
+      beforetime:
+        displayName: time_stamp
+        type: string
+        description: 最晚时间, 格式：2015-11-23T09#58;02#58;52Z
+        example: beforetime=2015-11-23T09#58;02#58;52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              sellername: 数据提供者
+              supply_style: flow | batch 
+              signtime: 订购时间
+              expiretime: 自动过期时间
+              freezetime: 交易成功时间（在未达到freezed phase之前，此值为空）
+              finishtime: 交易完成时间（在未达到freezed phase之前，此值为空）
+              phase: 1-3, 5-10 (意义：consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6, applying#58; 7, wthdrawn#58; 8, denied#58; 9, flagged#58; 10)
+              plan.money: 交易金额
+              plan.units: 最大下载次数（supply_style=batch）,最大下载天数（supply_style=flow)
+              plan.used: 已经使用量　
+              plan.limit: 最多可以订购次数
+              plan.subs: 当前订购次数
+              plan.expire: 交易有效期（天数）
+            example: |
+              [
+                {
+                  "subscriptionid": 1234567,
+                  "sellername": "li4@example.com",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-10T15:04:05Z08:00",
+                  "expiretime":"2016-01-15T11:28:21Z",
+                  "freezetime":"2015-12-11T10:51:11Z",
+                  "finishtime":"2016-01-10T10:51:11Z",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                },
+                {
+                  "subscriptionid": 1234568,
+                  "sellername": li4@example.com",
+                  "supply_style":"flow",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                }
+              ]
+/push:
+  get:
+    description: 【提供者】查询所有在自己的dataitem上的订购
+    headers:
+      Authorization:
+        description: 非匿名用户需加Auth header，匿名可用可不传。
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      phase:
+        description: consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6
+        enum: [1..3,5..10]
+        example: phase=1
+        required: false
+      beforetime:
+        displayName: time_stamp
+        type: string
+        description: 最晚时间, 格式：2015-11-23T09#58;02#58;52Z
+        example: beforetime=2015-11-23T09#58;02#58;52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              buyername: 数据消费者
+              repname: repository name
+              itemname: data item name
+              signtime: 订购时间
+            example: |
+              [
+                {
+                  "subscriptionid": 1234567,
+                  "buyername":"zhang3@example.com",
+                  "repname":"NBA",
+                  "itemname":"bear",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                },
+                {
+                  "subscriptionid": 1234568,
+                  "buyername":"li4@example.com",
+                  "repname":"CBA",
+                  "itemname":"triger",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                }
+              ]
+/push/{reponame}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+  get:
+    description: 【提供者】查询在自己的某个respository中的所有订购
+    headers:
+      Authorization:
+        description: 非匿名用户需加Auth header，匿名可用可不传。
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      phase:
+        description: consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6
+        enum: [1..3,5,6]
+        example: phase=1
+        required: false
+      beforetime:
+        displayName: time_stamp
+        type: string
+        description: 最晚时间, 格式：2015-11-23T09#58;02#58;52Z
+        example: beforetime=2015-11-23T09#58;02#58;52Z
+        required: false
     responses:
       200:
         body:
           application/json:
             example: |
-              {
-                "code": 0,
-                "msg": "Location_information/Cell:BR201511250013_23GCELL_05 will be pulled into /data/mydp/Cell",
-                "data": null
-              }
+              [
+                {
+                  "subscriptionid": 1234567,
+                  "buyername":"zhang3@example.com",
+                  "itemname":"bear",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                },
+                {
+                  "subscriptionid": 1234568,
+                  "buyername":"li4@example.com",
+                  "itemname":"triger",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                }
+              ]
+/push/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【提供者】查询自己的某个dataitem上的所有订购
+    headers:
+      Authorization:
+        description: 非匿名用户需加Auth header，匿名可用可不传。
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      phase:
+        description: consuming#58; 1, freezed#58; 2, finished#58; 3, cancelled#58; 5, removed#58; 6
+        enum: [1..3,5..10]
+        example: phase=1
+        required: false
+      beforetime:
+        displayName: time_stamp
+        type: string
+        description: 最晚时间, 格式：2015-11-23T09#58;02#58;52Z
+        example: beforetime=2015-11-23T09#58;02#58;52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "subscriptionid": 1234567,
+                  "buyername":"zhang3@example.com",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                },
+                {
+                  "subscriptionid": 1234568,
+                  "buyername":"li4@example.com",
+                  "supply_style":"batch",
+                  "signtime":"2015-11-01T15:04:05Z08:00",
+                  "expiretime":"2015-11-04T15:04:05Z08:00"
+                  "freezetime":"2015-12-04T15:04:05Z08:00",
+                  "finishtime":"2016-01-04T15:04:05Z08:00",
+                  "phase":"consuming",
+                  "plan":{
+                      "money":5,
+                      "units":3,
+                      "used":0,
+                      "limit":0,
+                      "subs":1,
+                      "expire":30
+                  }
+                }
+              ]

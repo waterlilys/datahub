@@ -1,0 +1,197 @@
+/{loginname}:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  get:
+    description: 【任意】 返回一个用户的详细情况，如果是自己，可以获得更详细的情况，如何是其他人，获得基本情况
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK",
+                "data": {
+                  "comment":"abc",
+                  "nickName":"foo",
+                  "userName":"FOO",
+                  "userType":1,
+                  "quata":"",
+                  "registTime":"2015-12-01",
+                  "invalidTime":"2016-12-01"
+                }
+              }
+  post:
+    description: 【任意】创建一个用户
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    queryParameters:
+      passwd:
+        description: MD5以后的密码
+        example: passwd=xxxxxxxxxxxxxxx
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+  put:
+    description:  【管理员】修改一个用户
+    headers:
+      Authorization:
+        description: 普通用户传Authorizaiton
+        type: string
+        required: false
+        example: Authorization#58; Token xxxxxxxxxxxxxxxxxxxx
+      USER:
+        description: 管理员用户需要同时传入USER
+        type: string
+        required: false
+        example: USER#58;admin
+    body:
+      application/json:
+        schema:
+          输入数据说明：
+            userstatus：用户状态（除了激活状态，其他状态需要有管理员权限）
+            nickname：昵称
+            username：真实名称
+            comments：描述信息
+            passwd：密码(MD5)
+          备注：普通用户
+        example: |
+          {
+            "userstatus":"3",
+            "nickname":"foo",
+            "username":"FOO",
+            "comments":"测试用户",
+            "passwd":".........."
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {"code":0,"msg":"ok"}
+  delete:
+    description: 
+      【管理员角色】删除一个用户
+      注：本操作不是真的删除一条数据，是将用户状态改成 注销状态（user_status:7）
+    headers:
+      Authorization:
+        description: 传入Authorizaiton
+        type: string
+        required: true
+        example: Authorization#58; Token xxxxxxxxxxxxxxxxxxxx
+      USER:
+        description: 管理员用户需要同时传入USER
+        type: string
+        required: true
+        example: USER#58;admin
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {"code":0,"msg":"ok"}
+/{loginname}/active:
+  uriParameters:
+    loginname:
+      description: 要激活的用户
+      example: shendf@asiainfo.com
+      required: true
+  put:
+    description:  【管理员】激活用户
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK",
+                "data": {
+                  "comment":"abc",
+                  "nickName":"foo",
+                  "userName":"FOO",
+                  "userType":1,
+                  "quata":"",
+                  "registTime":"2015-12-01",
+                  "invalidTime":"2016-12-01"
+                }
+              }
+/{loginname}/pwd:
+  uriParameters:
+    loginname:
+      description: 要修改密码的用户
+      example: shendf@asiainfo.com
+      required: true
+  put:
+    description: 【自己或者管理员】修改用户密码
+    headers:
+      Authorization:
+        description: token
+        type: string
+        required: true
+        example: Authorization#58; Token xxxxxxxxxxxxxxxxxxxx
+    body:
+      application/json:
+            schema:
+              返回数据说明：
+                oldpwd：修改前密码（md5）
+                passwd：修改后密码（md5）
+            example: |
+              {"passwd":"xxxxxxxxx","oldpwd":"yyyyyyyyyy"}
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {"code":0,"msg":"ok"}
+/{loginname}/pwd/validate:
+  uriParameters:
+    loginname:
+      description: 要验证密码的用户
+      example: shendf@asiainfo.com
+      required: true
+  get:
+    description: 【任意】验证密码是否正确
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    queryParameters:
+      pwd:
+        description: MD5以后的密码
+        example: pwd=xxxxxxxxxxxxxxx
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              code:状态码 0：密码正确，8004：密码错误，1007：参数错误，1001：其他系统异常
+              msg:操作信息，用来记录失败信息
+            example: |
+              {
+                "code": 0,
+                "msg": "OK",
+              }

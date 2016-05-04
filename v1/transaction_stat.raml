@@ -1,0 +1,102 @@
+/{reponame}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+  get:
+    description: 【任意】返回该repositories的pull量
+    headers:
+      Authorization:
+        description: 非匿名用户需加Auth header，匿名可用可不传。
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            schema:
+              numpulls#58; 所有人总共产的pull量
+              nummypulls#58; 当前用户产生的pull量 (匿名请求无此项) 
+            example: |
+              {
+                "code": 0,
+                "msg": "OK",
+                "data": {
+                  "numpulls":567，
+                  "nummypulls"":12
+                }
+              }
+/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【任意】返回该DataItem的pull量
+    headers:
+      Authorization:
+        description: 非匿名用户需加Auth header，匿名可用可不传。
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            schema:
+              numpulls#58; 所有人总共产的pull量
+              nummypulls#58; 当前用户产生的pull量 (匿名请求无此项) 
+            example: |
+              {
+                "code": 0,
+                "msg": "OK",
+                "data": {
+                  "numpulls":567，
+                  "nummypulls"":12
+                }
+              }
+/{reponame}/{itemname}/{tag}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+    tag:
+      description: tag名称
+      example: Cars_yieche_20151101
+      required: true
+  get:
+    description: 【任意】返回该tag的pull量
+    headers:
+      Authorization:
+        description: 非匿名用户需加Auth header，匿名可用可不传。
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            schema:
+              numpulls#58; 所有人总共产的pull量
+              nummypulls#58; 当前用户产生的pull量 (匿名请求无此项) 
+            example: |
+              {
+                "code": 0,
+                "msg": "OK",
+                "data": {
+                  "numpulls":567，
+                  "nummypulls"":12
+                }
+              }

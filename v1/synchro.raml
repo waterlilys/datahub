@@ -1,0 +1,211 @@
+/userIdentity:
+  get:
+    description: check user's 3 infomation
+    responses:
+      1000:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 1000,
+                "msg": "查询成功",
+                "data": 
+                  {
+                    "action": "userIdentity",
+                    "checkResult": "01"
+                  }
+              }
+      1100:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 1100,
+                "msg": "消息格式错误",
+                "data": ""
+              }
+      1200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 1200,
+                "msg": "身份验证失败",
+                "data": ""
+              }
+      1300:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 1300,
+                "msg": "消息已过期",
+                "data": ""
+              }
+      5000:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 5000,
+                "msg": "内部错误",
+                "data": ""
+              }
+    queryParameters:
+      time_stamp:
+        displayName: time_stamp
+        type: string
+        description: unix time_stamp
+        example: 1441073700
+        required: true
+      live_time:
+        displayName: live_time
+        type: string
+        description: request live time
+        example: 3600
+        required: true
+      access_key_id:
+        displayName: access_key_id
+        type: string
+        description: access_key_id just like token
+        example: ACCESSKEYIDEXAMPLE
+        required: true
+      signature:
+        displayName: signature
+        type: string
+        description: MD5(time_stamp+access_key_id+access_key)
+        example: de443076dee537dcb010ffcd4b40f1fe
+        required: true
+      telNO:
+        displayName: TelNo
+        type: string
+        description: paramter telNo(mobile)
+        example: 18612690773
+        required: true
+      certType:
+        displayName: certType
+        type: string
+        description: paramter IDCard Type
+        example: 0101 
+        required: true
+      certCode:
+        displayName: certCode
+        type: string
+        description: paramter IDCard's Number
+        example: 100104197701173123
+        required: true
+      userName:
+        displayName: userName
+        type: string
+        description: paramter user name
+        example: 沈道峰
+        required: true
+      authID:
+        displayName: authID
+        type: string
+        description: paramter auth file No
+        example: 授权文件号10011982
+        required: true
+      custName:
+        displayName: custName
+        type: string
+        description: paramter Org or bank name
+        example: 招商银行信贷部
+        required: true
+/telVerify:
+  get:
+    description: Check user's Telno status and howLongTime
+    responses:
+      1000:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 1000,
+                "msg": "查询成功",
+                "data": 
+                  {
+                    "action": "telVerify",
+                    "telStatus": 2
+                    "inUseTime": 2
+                  }
+              }
+      1100:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 1100,
+                "msg": "消息格式错误",
+                "data": ""
+              }
+      1200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 1200,
+                "msg": "身份验证失败",
+                "data": ""
+              }
+      1300:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 1300,
+                "msg": "消息已过期",
+                "data": ""
+              }
+      5000:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 5000,
+                "msg": "内部错误",
+                "data": ""
+              }
+    queryParameters:
+      time_stamp:
+        displayName: time_stamp
+        type: string
+        description: unix time_stamp
+        example: 1441073700
+        required: true
+      live_time:
+        displayName: live_time
+        type: string
+        description: request live time
+        example: 3600
+        required: true
+      access_key_id:
+        displayName: access_key_id
+        type: string
+        description: access_key_id just like token
+        example: ACCESSKEYIDEXAMPLE
+        required: true
+      signature:
+        displayName: signature
+        type: string
+        description: MD5(time_stamp+access_key_id+access_key)
+        example: de443076dee537dcb010ffcd4b40f1fe
+        required: true
+      telNO:
+        displayName: TelNo
+        type: string
+        description: paramter telNo(mobile)
+        example: 18612690773
+        required: true
+      authID:
+        displayName: authID
+        type: string
+        description: paramter auth file No
+        example: 授权文件号10011982
+        required: true
+      custName:
+        displayName: custName
+        type: string
+        description: paramter Org or bank name
+        example: 招商银行信贷部
+        required: true

@@ -1,0 +1,299 @@
+/{loginname}/repository:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  get:
+    description: 【自己或者管理员】获取用户的repo配额
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              code:状态码
+              msg:操作信息，用来记录失败信息
+              quotaPublic:public的repo的配额
+              usePublic：Public的repo的使用量
+              quotaPrivate:Private的repo的配额
+              usePrivate：Private的repo的使用量
+            example: |
+              {"code":0,"msg":"ok",
+                  data:{
+                      "quotaPublic":"10","usePublic":"5",
+                      "quotaPrivate":"15","usePrivate":"10"
+                      }
+              }
+  post:
+    description: 【管理员角色】添加用户的repo配额信息
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          private:私有repo配额数量
+          public:共有repo配额数量
+        example: |
+          {
+              "private":"20",
+              "public":"50"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+  put:
+    description: 【管理员角色】修改用户的repo的配额
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          private:私有repo配额数量
+          public:共有repo配额数量
+        example: |
+          {
+              "private":"20",
+              "public":"50"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+/quota/{loginname}/repository/use:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  post:
+    description: 
+      【管理员】修改用户的repo的使用量
+      注：只允许本人或者管理员修改
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          private:私有repo配额数量
+          public:共有repo配额数量
+        example: |
+          {
+              "private":"1",
+              "public":"1"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+/{loginname}/deposit:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  get:
+    description: 【自己或者管理员】获取用户的托管的配额信息
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              code#58;状态码
+              msg#58;操作信息，用来记录失败信息
+              quota#58;托管的配额
+              use#58;托管使用量
+            example: |
+              { "code":0,
+                "msg":"ok",
+                data:{
+                      "quota":"10M","use":"5M"
+                      }
+              }
+  post:
+    description: 【管理员】添加用户的托管配额信息 
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          quota:配额空间
+          unit:单位
+        example: |
+          {
+            "quota":"200",
+            "unit":"M"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+  put:
+    description: 【管理员】修改用户的托管的配额 
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          quota:托管配额空间大小
+        example: |
+          {
+              "quota":"300"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+/{loginname}/pullnum:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  get:
+    description: 【自己或者管理员】获取用户的下载量信息
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              code:状态码
+              msg:操作信息，用来记录失败信息
+              quota:pull量的配额
+              use：实际pull量
+            example: |
+              { "code":0,
+                "msg":"ok",
+                data:{
+                      "quota":"10M","use":"5M"
+                      }
+              }
+  post:
+    description: 【管理员】增加用户的下载量配额信息 
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          quota:配额空间
+        example: |
+          {
+            "quota":"20000"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+  put:
+    description: 【管理员】修改用户的下载量的配额 
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          quota:下载量配额
+        example: |
+          {
+              "quota":"300000"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+/{loginname}/pullnum/use:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  post:
+    description: 【管理员】修改用户的已下载量
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: admin
+    body:
+      application/json:
+        schema:
+          use:下载数量
+        example: |
+          {
+            "use":"10"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              code:状态码，(0：成功；7000:未知错误；7005：未登录；7006：权限不够)
+              msg:操作信息，用来记录失败信息
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }

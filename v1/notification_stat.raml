@@ -1,0 +1,21 @@
+get:
+  description: 【用户】 取得自己的提醒汇总统计
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            {
+                "subs_message": 6,
+                "dataitem_comment": 20,
+                "comment_reply": 2,
+                "private_message": 6,
+                "admin_broadcast": 1
+            }
+delete:
+  description: 【用户】清除自己的提醒汇总统计
+  responses:
+    200:
+      body:
+        application/text:
+         example: ""

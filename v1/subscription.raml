@@ -1,0 +1,214 @@
+description: |
+  (46) 查询是否已经有有效订购存在
+       GET /subscription/{reponame}/{itemname}
+  (46b) 查询是否已经有订购申请存在
+       GET /subscription/{reponame}/{itemname}/apply
+  (47) 取得预订购信息
+       POST /subscription/{reponame}/{itemname}
+  (47b) 为申请订购取得预订购信息
+       POST /subscriptions/{reponame}/{itemname}/apply
+  (48) 确定签署一个订购 (subscribe)
+       PUT /subscription/{reponame}/{itemname}
+  (48b) 申请一个订购;取消申请一个订购;同意一个订购申请;否决一个订购申请
+       PUT /subscriptions/{reponame}/{itemname}/apply
+  (49)  【管理员】取消订购action=remove
+       PUT /subscription/{subscriptionid}
+/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【需求者】查询是否已经有有效订购存在
+    headers:
+      Authorization:
+        description: 用户需加Auth header
+        type: string
+        required: true
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": true
+              }
+  post:
+    description: 【需求者】取得预订购信息
+    headers:
+      Authorization:
+        description: 用户需加Auth header。
+        type: string
+        required: true
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              subscriptionid: 预订购id
+              signtime: 预订购时间
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": {
+                  "subscriptionid": 1234567890,
+                  "signtime": "2015-09-10T15:04:05Z08:00"
+                }
+              }
+  put:
+    description: 【需求者】确定签署一个订购 (subscribe)
+    headers:
+      Authorization:
+        description: 用户需加Auth header。
+        type: string
+        required: true
+        example: Token 1a9686a83076241637693cab91fa3010
+    body:
+      application/json:
+        schema: |
+          subscriptionid: 预订购id (purpose=withdraw时不需要)
+          planid: DataItem上的某个收费计划的uuid (只对purpose=subscribe和purpose=apply有效)
+        example: |
+          {
+            "subscriptionid": 1234567890,
+            "planid": "a0a1a2a3a4a5a6a7a8a9aaabacad"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+/push/{reponame}/{itemname}/apply:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【需求者】查询是否已经有订购申请存在
+    headers:
+      Authorization:
+        description: 用户需加Auth header
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": {
+                  "subscriptionid": 1234568,
+                  "applytime":"2015-11-01T15:04:05Z08:00",
+                }
+              }
+  post:
+    description: 【需求者】为申请订购取得预订购信息
+    headers:
+      Authorization:
+        description: 用户需加Auth header
+        type: string
+        required: true
+        example: Token 1a9686a83076241637693cab91fa3010
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              subscriptionid: 预订购id
+              applytime: 预订购时间
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": {
+                  "subscriptionid": 1234568,
+                  "applytime":"2015-11-01T15:04:05Z08:00",
+                }
+              }
+  put:
+    description: |
+      【需求者】申请一个订购 (apply)
+      【需求者】取消申请一个订购 (withdraw)
+      【提供者】同意一个订购申请 (agree)
+      【提供者】否决一个订购申请 (deny)
+    headers:
+      Authorization:
+        description: 用户需加Auth header。
+        type: string
+        required: true
+        example: Token 1a9686a83076241637693cab91fa3010
+    body:
+      application/json:
+        schema: |
+          action: ["apply","withdraw","agree","deny"]
+          subscriptionid: 预订购id (purpose=withdraw时不需要)
+          planid: DataItem上的某个收费计划的uuid (只对purpose=apply有效)
+        example: |
+          {
+            "action": "apply",
+            "subscriptionid": 1234567890,
+            "planid": "a0a1a2a3a4a5a6a7a8a9aaabacad"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+/{subscriptionid}:
+  put:
+    description: |
+      【管理员】取消订购action=remove
+    headers:
+      Authorization:
+        description: 用户需加Auth header。
+        type: string
+        required: true
+        example: Token 1a9686a83076241637693cab91fa3010
+    body:
+      application/json:
+        schema: |
+          action: remove
+          reason: 一段文本描述原因(<256个字符)
+        example: |
+          {
+            "action": "remove",
+            "reason": "bla bla ..."
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }

@@ -1,15 +1,32 @@
 #%RAML 0.8
 
-title: API on datahub daemon of asiainfo big data company.
-baseUri: /
+title: API on datahub of asiainfo big data company.
+baseUri: ../
 version: v1
 schemas:
   - RepoDefinition: !include v1/schema/RepoDefinition.json
 
 # there is 2 api
+/bill: !include v1/bill.raml
+/comment: !include v1/comment.raml
+/comments: !include v1/comments.raml
+/comment_stat: !include v1/comment_stat.raml
+/daemon: !include v1/daemon.raml
+/heartbeat: !include v1/heartbeat.raml
+/label: !include v1/label.raml
+/notifications: !include v1/notifications.raml
+/notification_stat: !include v1/notification_stat.raml
+/permission: !include v1/permission.raml
 /repositories: !include v1/repositories.raml
+/selects: !include v1/selects.raml
+/star: !include v1/star.raml
+/star_stat: !include v1/star_stat.raml
 /subscriptions: !include v1/subscriptions.raml
+/subscription: !include v1/subscription.raml
+/subscription_stat: !include v1/subscription_stat.raml
 /transaction: !include v1/transaction.raml
-/ep: !include v1/ep.raml
-/job: !include v1/job.raml
-/datapools: !include v1/datapools.raml
+/transactions: !include v1/transactions.raml
+/transaction_stat: !include v1/transaction_stat.raml
+/users: !include v1/users.raml
+/quota: !include v1/quota.raml
+/vip: !include v1/vip.raml

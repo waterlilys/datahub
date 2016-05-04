@@ -1,0 +1,113 @@
+/{loginname}:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  get:
+    description: 【任意】查看用户会员的相关信息
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: foo
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              userType#58; 会员级别
+              repoPub#58; 共有repo资源量
+              repoPri#58; 私有repo资源量
+              pullNum#58; 免费数据Pull量
+              payWay#58; pull付费方式 (1:预付费，2后付费)
+              deposit#58; 托管配额
+              fee#58; 年费
+            example: |
+              {"data":    {
+                  "deposit":"0M",
+                  "fee":0,
+                  "payWay":0,
+                  "pullNum":100,
+                  "repoPri":10,
+                  "repoPub":20,
+                  "userType":0
+                  },
+              "code":0,"msg":"ok"
+              }
+  put:
+    description: |
+      【管理员】修改用户的会员信息,同时修改用户配额、以及扣取年费（管理员除外）
+           1 会员续费 userType与以前不变，扣取对应的年费（整年）
+             1）以前存在有效期，并且没有到期，就按照有效期时间+会员有效时间 生成新的失效时间；
+             2）以前不存在有效期或者已到期，按照当前申请时间+会员有效时间 生成新的失效时间；
+           2 升级会员 userType与以前变化，修改配额；会员到期时间，从当前开始到下一年
+             1）年费扣取时，如果原会员未到期，算一下剩余的年费，收取升级的年费时，扣除前一次的剩余年费，会员到期时间，从当前开始到下一年
+           3 降级会员：未到期时不能降级，到期后可降级，修改配额，扣取年费，修改失效时间
+    headers:
+      Authorization:
+        description: 普通用户传Authorizaiton
+        type: string
+        required: false
+        example: Authorization#58; Token xxxxxxxxxxxxxxxxxxxx
+      USER:
+        description: 管理员用户需要同时传入USER
+        type: string
+        required: false
+        example: USER#58;admin
+    body:
+      application/json:
+        schema: |
+          userType#58;会员级别(1：普通用户，2：管理员用户,3:认证会员,4：金卡会员，5钻石会员)
+          cost#58;费用
+          validity#58;有效期（单位：年）,如果不传此参数，默认为1
+        example: |
+          {
+            "userType":"3",
+            "cost":"1400",
+            "validity":"2"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "OK"
+              }
+/{loginname}/cost:
+  uriParameters:
+    loginname:
+      description: 要查询的用户
+      example: shendf@asiainfo.com
+      required: true
+  get:
+    description: 【任意】查看用户要升级的会员所需金额
+    headers:
+      USER:
+        description: admin
+        type: string
+        required: true
+        example: foo
+    queryParameters:
+      userType:
+        description: 会员级别(1：普通用户，2：管理员用户，3：认证会员，4：金卡会员，5：钻石会员)
+        enum: [1,2,3,4,5]
+        example: userType=4
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              cost:金额
+            example: |
+              {
+                "data":{
+                  "cost":"1400"
+                },
+                "code":0,
+                "msg":"ok"
+              }

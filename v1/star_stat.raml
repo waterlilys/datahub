@@ -1,0 +1,30 @@
+/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【任意】返回该DataItem的star量
+    responses:
+      200:
+        body:
+          application/text:
+            example: "numstars"#58;567
+/{reponame}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+  get:
+    description: 【任意】返回该Repository的star量
+    responses:
+      200:
+        body:
+          application/text:
+            example: "numstars"#58;567

@@ -1,0 +1,183 @@
+/select_labels:
+  get:
+    description: 【任意】返回精选栏目
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                  [
+                      {
+                          "labelname": "CHINA3", "icon":"path1"
+                      },
+                      {
+                          "labelname": "CHINA2", "icon":"path2"
+                      },
+                      {
+                          "labelname": "CHINA", "icon":"path3"
+                      }
+                  ]
+              }
+/select_labels/{labelname}:
+  post:
+    description: 【管理员】创建精选栏目
+    body:
+      description: 
+        order     精选栏目排序（1-100， 排序越大越靠前）
+        icon      精选栏目图片路径
+      application/json:
+        example: |
+          {
+            "order": 1,
+            "icon":"path1"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+  put:
+    description:
+      【管理员】更新现有精选栏目的名称
+      newlabelname   要改成的名字
+      order          精选栏目排序（1-100， 排序越大越靠前）
+      icon           精选栏目图片路径
+    body:
+      application/json:
+        example: |
+          {
+            "order": 1,
+            "icon":"path1"
+            "newlabelname":"2015股市"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+  delete:
+    description:
+      【管理员】删除精选栏目
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+/selects:
+  get:
+    description:
+      【任意】返回精选内容，按照order排序
+      【已登陆用户】返回该用户具有查询权限的private及public的Item
+    queryParameters:
+      select_labels:
+        description:
+          select_labels  精选栏目名称
+          若果不传，返回全部精选
+          如果传，返回label类别的精选
+        example: |
+          {
+            "order": 1,
+            "icon":"path1"
+            "newlabelname":"2015股市"
+          }
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "selects": [
+                    {
+                        "repname": "",
+                        "itemname": ""
+                    },
+                    {
+                        "repname": "",
+                        "itemname": ""
+                    },
+                    {
+                        "repname": "",
+                        "itemname": ""
+                    }
+                ]
+              }
+/selects/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【管理员】创建精选内容
+    body:
+      application/json:
+        example: |
+          {
+            "select_labels":"广告信息"，
+            "order":123
+          }
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+  put:
+    description: 【管理员】更新精选内容
+    body:
+      description:
+        select_labels[必选]：　                    精选栏目项
+        order[可选，默认为1，值越大排名越靠前]      精选排序功能 
+      application/json:
+        example: |
+          {
+            "select_labels":"广告信息"，
+            "order":123
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+  delete:
+    description: 【管理员】删除精选内容
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }

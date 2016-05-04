@@ -1,0 +1,66 @@
+/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository name
+      example: Internet_stats
+      required: true
+    itemname:
+      description: dataitem name
+      example: Music
+      required: true
+  post:
+    description: 【用户】对一个已经订阅的dataitem发表一个评论
+    body:
+      application/json:
+        example: |
+          {
+            "token": "a1a2a3a4a5a6a7a8",
+            "replyto": 0,
+            "content": "bla bla ..."
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data": null
+              }
+  put:
+    description: 【用户】修改自己对一个dataitem的评论
+    body:
+      application/json:
+        example: |
+          {
+            "commentid": 123456,
+            "content": "bla bla ..."
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 0,
+                "msg": "ok",
+                "data":null
+              }
+  delete:
+    description: 【用户】删除自己对一个dataitem的评论
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "code": 1000,
+                "msg": "ok",
+                "data": null
+              }
+    queryParameters:
+      commentid:
+        description: 要删除的评论id
+        example: 1234567
+        required: true

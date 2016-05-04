@@ -1,0 +1,334 @@
+/pull:
+  get:
+    description: 【需求者】返回该用户所有的pull的信息
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      groupbydate:
+        description: 默认为0，是否按日期分组
+        enum: [0,1]
+        example: groupbydate=1
+        required: false
+      beforetime:
+        description: 最晚时间
+        example: beforetime=201511-23T09:02:52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema:
+              返回数据说明：
+                sellername：提供者用户名
+                repname：repository name
+                itemname：data item name
+                tag：tag名
+                pulltime：pull time, RFC3339 format
+            example: |
+              //example of groupbydate=1
+              [
+                {
+                  "date": "2015-11-18",
+                  "pulls": [
+                    {
+                      "sellername": "li4",
+                      "repname": "repo001",
+                      "itemname": "item002",
+                      "tag": "tag008",
+                      "pulltime": "2015-11-18T11:48:07Z",
+                      "subscriptionid": 12345,
+                      "supply_style": "batch"
+                    },
+                    {
+                      "sellername": "li4",
+                      "repname": "repo001",
+                      "itemname": "item002",
+                      "tag": "tag008",
+                      "pulltime": "2015-11-18T11:29:38Z",
+                      "subscriptionid": 567567,
+                      "supply_style": "flow"
+                    },
+                    {
+                      "sellername": "li4",
+                      "repname": "repo001",
+                      "itemname": "item002",
+                      "tag": "tag008",
+                      "pulltime": "2015-11-18T11:29:31Z",
+                      "subscriptionid": 99999,
+                      "supply_style": "batch"
+                    }
+                  ]
+                },
+                {
+                  "date":"2015-11-10",
+                  "pulls":[
+                    {
+                      "sellername": "li4",
+                      "repname": "repo001",
+                      "itemname": "item002",
+                      "tag": "tag008",
+                      "pulltime": "2015-11-10T10:10:10Z",
+                      "subscriptionid": 98765,
+                      "supply_style": "flow"
+                    }
+                  ]
+                }
+              ]
+              //example of groupbydate=1
+              [
+                {
+                  "sellername": "Li4",
+                  "repname": "repo1231",
+                  "itemname": "item9883",
+                  "tag": "tag8W",
+                  "pulltime": "2015-11-10T15:04:05Z07:00",
+                  "subscriptionid": 12345,
+                  "supply_style": "batch"
+                },
+                {
+                  "sellername": "Li4",
+                  "repname": "repo121",
+                  "itemname": "item989",
+                  "tag": "tag09",
+                  "pulltime": "2015-11-10T15:04:05Z07:00",
+                  "subscriptionid": 98765,
+                  "supply_style": "flow"
+                }
+              ]
+/pull/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【需求者】返回该用户pull的该DataItem上的tags
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      beforetime:
+        description: 最晚时间
+        example: beforetime=201511-23T09:02:52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema:
+              返回数据说明：
+                tag：tag名
+                pulltime：pull time, RFC3339 format
+            example: |
+              [
+                  {
+                      "tag": "tag8W",
+                      "pulltime": "2015-11-09T15:04:05Z07:00",
+                      "subscriptionid": 12345,
+                      "supply_style": "batch"
+                  },
+                  {
+                      "tag": "tag09",
+                      "pulltime": "2015-11-10T15:04:05Z07:00",
+                      "subscriptionid": 98765,
+                      "supply_style": "flow"
+                  }
+              ]
+/push:
+  get:
+    description: 【需求者】返回该用户用有的该DataItem被人家Pull的信息。
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      groupbydate:
+        description: 默认为0，是否按日期分组
+        enum: [0,1]
+        example: groupbydate=1
+        required: false
+      beforetime:
+        description: 最晚时间
+        example: beforetime=201511-23T09:02:52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              返回数据说明：
+                buyername：需求者用户名
+                repname：repository name
+                itemname：data item name
+                tag：tag名
+                pulltime：pull time, RFC3339 format
+            example: |
+              //example of groupbydate=1
+                [
+                  {
+                      "date":"2015-11-10",
+                      "pulls"[
+                          {
+                              "buyername": "Li4",
+                              "tag": "tag8W",
+                              "pulltime": "2015-11-10T15:04:05Z07:00",
+                              "subscriptionid": 123456,
+                              "supply_style": "batch"
+                          },
+                          {
+                              "buyername": "Zhang3",
+                              "tag": "tag09",
+                              "pulltime": "2015-11-10T10:09:05Z07:00",
+                              "subscriptionid": 789,
+                              "supply_style": "flow"
+                          }
+                      ]
+                  },
+                  {
+                      "date":"2015-11-03",
+                      "pulls"[
+                          {
+                              "buyername": "Zhang3",
+                              "tag": "tag09",
+                              "pulltime": "2015-11-03T15:06:05Z07:00",
+                              "subscriptionid": 789,
+                              "supply_style": "flow"
+                          }
+                      ]
+                  }
+                ]
+                //example of groupbydate=2
+                [
+                  {
+                      "buyername": "Li4",
+                      "tag": "tag8W",
+                      "pulltime": "2015-11-10T15:04:05Z07:00",
+                      "subscriptionid": 123456,
+                      "supply_style": "batch"
+                  },
+                  {
+                      "buyername": "Zhang3",
+                      "tag": "tag09",
+                      "pulltime": "2015-11-10T15:09:05Z07:00",
+                      "subscriptionid": 789,
+                      "supply_style": "flow"
+                  },
+                  {
+                      "buyername": "Zhang3",
+                      "tag": "tag09",
+                      "pulltime": "2015-11-03T15:06:05Z07:00",
+                      "subscriptionid": 789,
+                      "supply_style": "flow"
+                  }
+                ]
+/push/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【需求者】返回该用户用有的该DataItem被人家Pull的信息。
+    headers:
+      Authorization:
+        description: 传入用户Token
+        type: string
+        required: false
+        example: Token 1a9686a83076241637693cab91fa3010
+    queryParameters:
+      groupbydate:
+        description: 默认为0，是否按日期分组
+        enum: [0,1]
+        example: groupbydate=1
+        required: false
+      beforetime:
+        description: 最晚时间
+        example: beforetime=201511-23T09:02:52Z
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              返回数据说明：
+                buyername：需求者用户名
+                repname：repository name
+                itemname：data item name
+                tag：tag名
+                pulltime：pull time, RFC3339 format
+            example: |
+              //example of groupbydate=1
+                [
+                  {
+                      "date":"2015-11-10",
+                      "pulls"[
+                          {
+                              "buyername": "Li4",
+                              "tag": "tag8W",
+                              "pulltime": "2015-11-10T15:04:05Z07:00",
+                              "subscriptionid": 123456,
+                              "supply_style": "batch"
+                          },
+                          {
+                              "buyername": "Zhang3",
+                              "tag": "tag09",
+                              "pulltime": "2015-11-10T10:09:05Z07:00",
+                              "subscriptionid": 789,
+                              "supply_style": "flow"
+                          }
+                      ]
+                  },
+                  {
+                      "date":"2015-11-03",
+                      "pulls"[
+                          {
+                              "buyername": "Zhang3",
+                              "tag": "tag09",
+                              "pulltime": "2015-11-03T15:06:05Z07:00",
+                              "subscriptionid": 789,
+                              "supply_style": "flow"
+                          }
+                      ]
+                  }
+                ]
+              //example of groupbydate=0
+                [
+                  {
+                    "buyername": "Li4",
+                    "tag": "tag8W",
+                    "pulltime": "2015-11-10T15:04:05Z07:00",
+                    "subscriptionid": 123456,
+                    "supply_style": "batch"
+                  },
+                  {
+                    "buyername": "Zhang3",
+                    "tag": "tag09",
+                    "pulltime": "2015-11-10T15:09:05Z07:00",
+                    "subscriptionid": 789,
+                    "supply_style": "flow"
+                  },
+                  {
+                    "buyername": "Zhang3",
+                    "tag": "tag09",
+                    "pulltime": "2015-11-03T15:06:05Z07:00",
+                    "subscriptionid": 789,
+                    "supply_style": "flow"
+                  }
+                ]

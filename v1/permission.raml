@@ -1,0 +1,110 @@
+/{reponame}:
+  get:
+    description: 【rep拥有者】查询自己rep白名单的username列表，及相应的读写权限
+    responses:
+      200:
+        body:
+          application/json:
+           example: |
+              {
+                permissions:[
+                                {"username":"user1", "opt_permission": 1},  
+                                {"username":"user2", "opt_permission": 1}
+                           ],
+                total:50
+              }
+    queryParameters:
+      page:
+        description: (分页页数),1 - N,默认=1（page=1可以不传）
+        required: false
+      size:
+        description: （页面大小）,1 - N，默认=6 (-1 返回全部)
+        required: false
+      username:
+        description: 查询某个用户是否在白名[如果是,返回用户名.如果否,返回空]
+        example: shendf@asiainfo.com
+        required: false
+  delete:
+    description: 【rep拥有者】将某些用户（非自己）从rep白名单中删除
+    queryParameters:
+      username:
+        description: 被从白名单删除的用户名,可以传多个username
+        example: shendf@asiainfo.com
+        required: false
+        repeat: true
+      delall:
+        description: 是否删除所有白名单用户[delall=1 删除所有]
+        example: shendf@asiainfo.com
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+           example: ""
+  put:
+    description: 【rep拥有者】将某用户（非自己）加入或更新rep白名单中
+    body:
+      application/json:
+        example: |
+          {"username":"user1","opt_permission":1}
+    responses:
+      200:
+        body:
+          application/text:
+           example: ""
+/{reponame}/{itemname}:
+  get:
+    description: 【item拥有者】查询自己item白名单中username列表
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              }
+                permissions:[
+                              {"username":"user1"},
+                              {"username":"user2"},
+                              {"username":"user3"},
+                              {"username":"user4"}
+                            ],
+                total:50           
+              }
+    queryParameters:
+      page:
+        description: (分页页数),1 - N,默认=1（page=1可以不传）
+        required: false
+      size:
+        description: （页面大小）,1 - N，默认=6 (-1 返回全部)
+        required: false
+      username:
+        description: 查询某个用户是否在白名[如果是,返回用户名.如果否,返回空]
+        example: shendf@asiainfo.com
+        required: false
+  delete:
+    description: 【item拥有者】将某些用户（非自己）从item白名单中移除
+    queryParameters:
+      username:
+        description: 被从白名单删除的用户名,可以传多个username
+        example: shendf@asiainfo.com
+        required: false
+        repeat: true
+      delall:
+        description: 是否删除所有白名单用户[delall=1 删除所有]
+        example: shendf@asiainfo.com
+        required: false
+    responses:
+      200:
+        body:
+          application/text:
+            example: ""
+  put:
+    description: 【item拥有者】将某用户（非自己）加入item白名单中
+    body:
+      application/json:
+        example: |
+          {"username":"user1"}
+    responses:
+      200:
+        body:
+          application/text:
+           example: ""

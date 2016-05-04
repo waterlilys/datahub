@@ -1,0 +1,30 @@
+/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository名称
+      example: Intenet_stats
+      required: true
+    itemname:
+      description: dataitem名称
+      example: Cars
+      required: true
+  get:
+    description: 【用户】查询是否star某个DataItem
+    responses:
+      200:
+        body:
+          application/text:
+            example: "starred"#58;true
+  put:
+    description: 【用户】更改对一个DataItem的star状态 
+    queryParameters:
+      star:
+        description: star#58;0表示unstar, 1表示star
+        enum: [0,1]
+        example: star=1
+        required: true
+    responses:
+      200:
+        body:
+          application/text:
+            example: "starred"#58;true

@@ -1,0 +1,23 @@
+/{reponame}/{itemname}:
+  uriParameters:
+    reponame:
+      description: repository name
+      example: Internet_stats
+      required: true
+    itemname:
+      description: dataitem name
+      example: Music
+      required: true
+  get:
+    description: 【任何】返回一个dataitem上的评论列表
+    responses:
+      200:
+        body:
+          application/text:
+           example: 
+    queryParameters:
+      beforetime:
+        description: （可选，默认为当前时间）最晚时间, 格式：2015-11-23T09:02:52Z（可以使用上次返回的评论列表中的最后一个评论的createtime
+        example: 1234567
+        required: false
+ 

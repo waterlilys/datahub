@@ -1,0 +1,65 @@
+get:
+  description: 【用户】返回当前用户接受到的消息列表
+  responses:
+    200:
+      body:
+        application/json:
+          example: |
+            [
+                {
+                    "sender": "zhang3@aaa.com",
+                    "status": 0,
+                    "createtime": "2015-11-10T15:04:05Z08:00",
+                    "content": "bla bla ..."
+                },
+                {
+                    "sender": "li4@aaa.com",
+                    "status": 1,
+                    "createtime": "2015-11-10T15:04:09Z08:00",
+                    "content": "bla bla ..."
+                },
+                {
+                    "sender": "li4@bbb.com",
+                    "status": 0,
+                    "createtime": "2015-11-10T15:06:09Z08:00",
+                    "content": "bla bla ..."
+                }
+            ]
+  queryParameters:
+    type:
+      enum: ["private_message","public_message"]
+      description: 消息类型
+      example: type=private_message
+      required: false
+    sender:
+      description: 消息发送者
+      example: sende=shendf@asiainfo.com
+      required: false
+    status:
+      description: 消息状态
+      example: status=1
+      required: false
+    beforetime:
+      description: （可选，默认为now）最晚时间, 毫秒数
+      example: beforetime=1111
+      required: false
+post:
+  description: 
+    【用户】 创建一条用户提醒。
+     此接口主要作为一个public API给客户端使用，目前只有一个用处：用户从客户端申请某个dataitem的白名单。
+     内部接口需使用下面的kafka API通信。
+  body: 
+    application/json:
+      example: |
+        {
+          "type": "apply_whitelist",
+          "data": {
+              "repname": "repo001",
+              "itemname": "item123"
+          }
+        }
+  responses:
+    200:
+      body:
+        application/text:
+         example: ""
